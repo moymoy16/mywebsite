@@ -1,0 +1,29 @@
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9edf3 100%);
+    min-height: 100vh;
+}
+
+.card {
+    backdrop-filter: blur(6px);
+}
+
+.form-control:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .15);
+    border-color: #0d6efd;
+}
+
+.btn-primary {
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(13, 110, 253, .25);
+}
+
+.card {
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important;
+}

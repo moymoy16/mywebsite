@@ -1,0 +1,27 @@
+# Environment / secrets
+.env
+config/database.php
+
+# Uploads (user content, don't commit)
+public/uploads/items/*
+!public/uploads/items/.gitkeep
+
+# Logs
+storage/logs/*
+!storage/logs/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Vendor (if you use Composer later)
+/vendor/
+
+# Composer lock (optional)
+composer.lock
