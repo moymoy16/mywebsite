@@ -43,33 +43,6 @@ class BorrowController extends Controller
         ]);
     }
 
-    public function approve(string $id): void
-    {
-        Middleware::admin();
-
-        $borrowingModel = new Borrowing();
-        $itemModel      = new Item();
-
-        $borrowing = $borrowingModel->findWithRelations((int)$id);
-        if (!$borrowing || $borrowing['status'] !== 'pending') {
-            redirect('/admin/borrowings');
-        }
-
-        // Atomic decrement — fails if not enough stock
-        $ok = $itemModel->decrementStock(
-            (int)$borrowing['item_id'],
-            (int)$borrowing['quantity']
-        );
-
-        if (!$ok) {
-            redirect('/admin/borrowings/' . $id);
-        }
-
-        $borrowingModel->setStatus((int)$id, 'approved', (int)$_SESSION['user_id']);
-        (new Contract())->createForBorrowing((int)$id);
-
-        redirect('/admin/borrowings/' . $id);
-    }
 
     public function reject(string $id): void
     {
@@ -79,21 +52,47 @@ class BorrowController extends Controller
         redirect('/admin/borrowings/' . $id);
     }
 
+    public function approve(string $id): void
+    {
+        Middleware::admin();
+
+        $borrowingModel = new Borrowing();
+        $borrowing = $borrowingModel->findWithRelations((int)$id);
+
+        if (!$borrowing || $borrowing['status'] !== 'pending') {
+            redirect('/admin/borrowings');
+        }
+
+        // Atomic multi-item stock decrement
+        $ok = $borrowingModel->decrementStockForBorrowing((int)$id);
+
+        if (!$ok) {
+            $_SESSION['flash'] = 'Could not approve: some items are out of stock.';
+            redirect('/admin/borrowings/' . $id);
+        }
+
+        $borrowingModel->setStatus((int)$id, 'approved', (int)$_SESSION['user_id']);
+        (new Contract())->createForBorrowing((int)$id);
+
+        $_SESSION['flash'] = 'Borrowing approved and contract generated.';
+        redirect('/admin/borrowings/' . $id);
+    }
+
     public function markReturned(string $id): void
     {
         Middleware::admin();
 
         $borrowingModel = new Borrowing();
-        $itemModel      = new Item();
-
         $borrowing = $borrowingModel->findWithRelations((int)$id);
+
         if (!$borrowing || !in_array($borrowing['status'], ['approved', 'overdue'], true)) {
             redirect('/admin/borrowings/' . $id);
         }
 
-        $itemModel->incrementStock((int)$borrowing['item_id'], (int)$borrowing['quantity']);
+        $borrowingModel->incrementStockForBorrowing((int)$id);
         $borrowingModel->markReturned((int)$id);
 
+        $_SESSION['flash'] = 'Item(s) returned. Stock restored.';
         redirect('/admin/borrowings/' . $id);
     }
 }

@@ -37,17 +37,28 @@ class Contract extends Model
     {
         $stmt = $this->db->prepare(
             "SELECT c.*,
-                    b.quantity, b.borrow_date, b.due_date, b.status AS borrowing_status,
-                    i.name AS item_name, i.category, i.description AS item_description,
+                    b.borrow_date, b.due_date, b.status AS borrowing_status,
                     u.name AS student_name, u.email AS student_email, u.student_id
             FROM {$this->table} c
             JOIN borrowings b ON b.id = c.borrowing_id
-            JOIN items      i ON i.id = b.item_id
-            JOIN users      u ON u.id = b.student_id
+            JOIN users u ON u.id = b.student_id
             WHERE c.id = ? LIMIT 1"
         );
         $stmt->execute([$id]);
-        return $stmt->fetch() ?: null;
+        $contract = $stmt->fetch();
+        if (!$contract) return null;
+
+        // Fetch items
+        $itemStmt = $this->db->prepare(
+            "SELECT bi.*, i.name AS item_name, i.category, i.description AS item_description
+            FROM borrowing_items bi
+            JOIN items i ON i.id = bi.item_id
+            WHERE bi.borrowing_id = ?"
+        );
+        $itemStmt->execute([$contract['borrowing_id']]);
+        $contract['items'] = $itemStmt->fetchAll();
+
+        return $contract;
     }
 
     public function allWithRelations(): array
@@ -55,12 +66,14 @@ class Contract extends Model
         return $this->db->query(
             "SELECT c.*,
                     b.status AS borrowing_status, b.due_date,
-                    i.name AS item_name,
-                    u.name AS student_name
+                    u.name AS student_name,
+                    (SELECT COUNT(*) FROM borrowing_items WHERE borrowing_id = b.id) AS item_count,
+                    (SELECT i.name FROM borrowing_items bi
+                        JOIN items i ON i.id = bi.item_id
+                        WHERE bi.borrowing_id = b.id LIMIT 1) AS first_item_name
             FROM {$this->table} c
             JOIN borrowings b ON b.id = c.borrowing_id
-            JOIN items      i ON i.id = b.item_id
-            JOIN users      u ON u.id = b.student_id
+            JOIN users u ON u.id = b.student_id
             ORDER BY c.created_at DESC"
         )->fetchAll();
     }

@@ -1,29 +1,119 @@
+/* ═══════════════════════════════════════════
+   PCU Theme — Philippine Christian University
+   Blue · Gold · White
+   ═══════════════════════════════════════════ */
+
+:root {
+    --pcu-blue:        #1e3a8a;   /* PCU royal blue */
+    --pcu-blue-dark:   #172e6f;   /* hover state */
+    --pcu-blue-light:  #3b5bdb;   /* accents */
+    --pcu-blue-soft:   #e0e7ff;   /* tinted bg */
+    --pcu-gold:        #fbbf24;   /* PCU gold */
+    --pcu-gold-dark:   #f59e0b;   /* gold hover */
+    --pcu-gold-soft:   #fef3c7;   /* gold tint */
+    --pcu-ink:         #0f172a;   /* text */
+    --pcu-bg:          #f8fafc;   /* page background */
+}
+
+/* ═══ Base ═══ */
 body {
-    background: linear-gradient(135deg, #f5f7fa 0%, #e9edf3 100%);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--pcu-bg);
+    color: var(--pcu-ink);
     min-height: 100vh;
 }
 
-.card {
-    backdrop-filter: blur(6px);
+h1, h2, h3, h4, h5 {
+    letter-spacing: -0.02em;
+    color: var(--pcu-ink);
 }
 
-.form-control:focus {
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .15);
-    border-color: #0d6efd;
-}
-
+/* ═══ Buttons ═══ */
 .btn-primary {
-    transition: transform .15s ease, box-shadow .15s ease;
+    background: var(--pcu-blue);
+    border-color: var(--pcu-blue);
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
 }
-.btn-primary:hover {
+.btn-primary:hover,
+.btn-primary:focus {
+    background: var(--pcu-blue-dark);
+    border-color: var(--pcu-blue-dark);
     transform: translateY(-1px);
-    box-shadow: 0 8px 20px rgba(13, 110, 253, .25);
+    box-shadow: 0 6px 16px rgba(30, 58, 138, .25);
 }
 
+.btn-outline-primary {
+    color: var(--pcu-blue);
+    border-color: var(--pcu-blue);
+}
+.btn-outline-primary:hover {
+    background: var(--pcu-blue);
+    border-color: var(--pcu-blue);
+    color: #fff;
+}
+
+.btn-gold {
+    background: var(--pcu-gold);
+    border-color: var(--pcu-gold);
+    color: var(--pcu-blue-dark);
+    font-weight: 600;
+}
+.btn-gold:hover {
+    background: var(--pcu-gold-dark);
+    border-color: var(--pcu-gold-dark);
+    color: #fff;
+}
+
+/* ═══ Text accent ═══ */
+.text-pcu-blue { color: var(--pcu-blue) !important; }
+.text-pcu-gold { color: var(--pcu-gold) !important; }
+.bg-pcu-blue   { background: var(--pcu-blue) !important; }
+.bg-pcu-gold   { background: var(--pcu-gold) !important; }
+
+/* ═══ Cards ═══ */
 .card {
-    transition: transform .15s ease, box-shadow .15s ease;
+    transition: transform .2s ease, box-shadow .2s ease;
 }
 .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 .5rem 1rem rgba(0,0,0,.08) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 .75rem 1.5rem rgba(15, 23, 42, .08) !important;
+}
+
+/* ═══ Hero gradient (PCU blue) ═══ */
+.pcu-hero {
+    background: linear-gradient(135deg, #0f1e5c 0%, #1e3a8a 60%, #2d4fb8 100%);
+    color: #fff;
+}
+
+/* ═══ Gold underline accent ═══ */
+.pcu-underline {
+    display: inline-block;
+    position: relative;
+}
+.pcu-underline::after {
+    content: '';
+    position: absolute;
+    left: 0; bottom: -4px;
+    width: 100%; height: 4px;
+    background: var(--pcu-gold);
+    border-radius: 2px;
+}
+
+/* ═══ Badges ═══ */
+.badge-pcu {
+    background: rgba(251, 191, 36, .15);
+    color: #92400e;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+}
+
+.badge-pcu-dark {
+    background: var(--pcu-blue-soft);
+    color: var(--pcu-blue);
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
 }

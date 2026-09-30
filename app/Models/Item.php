@@ -137,4 +137,15 @@ class Item extends Model
         $stmt->execute([$qty, $id, $qty]);
     }
     // ═══ END ADDED ═══   
+    public function findByIds(array $ids): array
+    {
+        if (empty($ids)) return [];
+        $placeholders = implode(',', array_fill(0, count($ids), '?'));
+        $stmt = $this->db->prepare(
+            "SELECT * FROM {$this->table}
+            WHERE id IN ($placeholders) AND status = 'active'"
+        );
+        $stmt->execute($ids);
+        return $stmt->fetchAll();
+    }
 }
